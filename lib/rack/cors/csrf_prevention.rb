@@ -28,7 +28,7 @@ module Rack
 
       def initialize(
         app,
-        paths: %w[/graphql],
+        paths:,
         required_headers: APOLLO_CUSTOM_PREFLIGHT_HEADERS
       )
         @app = app

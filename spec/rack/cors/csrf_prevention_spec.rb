@@ -2,7 +2,7 @@
 
 RSpec.describe Rack::Cors::CsrfPrevention do
   let(:app) { ->(env) { [200, env, "hello"] } }
-  let(:middleware) { Rack::Cors::CsrfPrevention.new(app) }
+  let(:middleware) { Rack::Cors::CsrfPrevention.new(app, paths: %[/graphql]) }
   let(:rack_response) { middleware.call(request) }
   let(:request_headers) { {} }
   let(:simple_request_header) { { "CONTENT_TYPE" => "application/x-www-form-urlencoded" } }
@@ -106,7 +106,13 @@ RSpec.describe Rack::Cors::CsrfPrevention do
   end
 
   context "when initialized with custom required headers" do
-    let(:middleware) { Rack::Cors::CsrfPrevention.new(app, required_headers: %w[REQUIRED-HEADER SOME-SPECIAL-HEADER]) }
+    let(:middleware) do
+      Rack::Cors::CsrfPrevention.new(
+        app,
+        paths: %[/graphql],
+        required_headers: %w[REQUIRED-HEADER SOME-SPECIAL-HEADER]
+      )
+    end
     let(:path) { "https://example.com/graphql" }
 
     context "with first required header" do
