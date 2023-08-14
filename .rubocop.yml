@@ -1,0 +1,12 @@
+AllCops:
+  NewCops: enable
+
+Metrics/BlockLength:
+  Exclude:
+    - *.gemspec
+
+Metrics/ParameterLists:
+  CountKeywordArgs: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
