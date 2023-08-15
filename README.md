@@ -20,21 +20,27 @@ gem install rack-cors-csrf_prevention
 
 ### Rails Configuration
 
+Specify paths for CSRF prevention:
+
 ```ruby
 # config/initializers/cors.rb
 
-Rails.application.config.middleware.use(
-  Rack::Cors::CsrfPrevention,
-  paths: %w[
-    /graphql
-    /admin/gql
-  ],
-  required_headers: %w[
-    X-APOLLO-OPERATION-NAME
-    APOLLO-REQUIRE-PREFLIGHT
-    SOME-SPECIAL-HEADER
-  ]
-)
+Rails.application.config.middleware.use Rack::Cors::CsrfPrevention,
+                                        paths: %w[/graphql]
+```
+
+You can also specify custom headers that allow execution. By default, it's `X-Apollo-Operation-Name` or `Apollo-Require-Preflight` headers, but you can configure to allow a `Some-Special-Header` header:
+
+```ruby
+# config/initializers/cors.rb
+
+Rails.application.config.middleware.use Rack::Cors::CsrfPrevention,
+                                        paths: %w[/graphql],
+                                        required_headers: %w[
+                                          X-APOLLO-OPERATION-NAME
+                                          APOLLO-REQUIRE-PREFLIGHT
+                                          SOME-SPECIAL-HEADER
+                                        ]
 ```
 
 ## Development
