@@ -63,6 +63,8 @@ module Rack
       end
 
       def content_type_requires_preflight?(request)
+        return false unless request.media_type
+
         !NON_PREFLIGHTED_CONTENT_TYPES.include?(request.media_type)
       end
 

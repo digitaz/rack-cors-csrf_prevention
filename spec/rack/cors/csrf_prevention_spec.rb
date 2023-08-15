@@ -16,6 +16,8 @@ RSpec.describe Rack::Cors::CsrfPrevention do
     let(:path) { "https://example.com/graphql" }
 
     context "with preflighted request" do
+      let(:request_headers) { { "CONTENT_TYPE" => "application/json" } }
+
       it "pass" do
         expect(@status).to eq(200)
         expect(@response).to eq("hello")
@@ -27,20 +29,40 @@ RSpec.describe Rack::Cors::CsrfPrevention do
     end
 
     context "with simple request" do
-      let(:request_headers) { simple_request_header }
+      context "from form" do
+        let(:request_headers) { simple_request_header }
 
-      it "rejected" do
-        expect(@status).to eq(400)
-        expect(@headers).to eq({ "Content-Type" => "text/plain" })
-        expect(@response).to eq([<<~HEREDOC])
-          This operation has been blocked as a potential Cross-Site Request Forgery (CSRF).
+        it "rejected" do
+          expect(@status).to eq(400)
+          expect(@headers).to eq({ "Content-Type" => "text/plain" })
+          expect(@response).to eq([<<~HEREDOC])
+            This operation has been blocked as a potential Cross-Site Request Forgery (CSRF).
 
-          Please either specify a "Content-Type" header (with a mime-type that is not one of application/x-www-form-urlencoded, multipart/form-data, text/plain) or provide one of the following headers: X-APOLLO-OPERATION-NAME, APOLLO-REQUIRE-PREFLIGHT.
-        HEREDOC
+            Please either specify a "Content-Type" header (with a mime-type that is not one of application/x-www-form-urlencoded, multipart/form-data, text/plain) or provide one of the following headers: X-APOLLO-OPERATION-NAME, APOLLO-REQUIRE-PREFLIGHT.
+          HEREDOC
+        end
+
+        it "logs", :skip_request do
+          expect { rack_response }.to output(/Request isn't preflighted/).to_stdout
+        end
       end
 
-      it "logs", :skip_request do
-        expect { rack_response }.to output(/Request isn't preflighted/).to_stdout
+      context "without content-type header" do
+        let(:request_headers) { {} }
+
+        it "rejected" do
+          expect(@status).to eq(400)
+          expect(@headers).to eq({ "Content-Type" => "text/plain" })
+          expect(@response).to eq([<<~HEREDOC])
+            This operation has been blocked as a potential Cross-Site Request Forgery (CSRF).
+
+            Please either specify a "Content-Type" header (with a mime-type that is not one of application/x-www-form-urlencoded, multipart/form-data, text/plain) or provide one of the following headers: X-APOLLO-OPERATION-NAME, APOLLO-REQUIRE-PREFLIGHT.
+          HEREDOC
+        end
+
+        it "logs", :skip_request do
+          expect { rack_response }.to output(/Request isn't preflighted/).to_stdout
+        end
       end
 
       context "when required header provided" do
@@ -53,6 +75,10 @@ RSpec.describe Rack::Cors::CsrfPrevention do
         it "pass" do
           expect(@status).to eq(200)
           expect(@response).to eq("hello")
+        end
+
+        it "logs", :skip_request do
+          expect { rack_response }.to output(/Request is preflighted/).to_stdout
         end
       end
     end
