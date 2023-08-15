@@ -7,13 +7,13 @@ Ruby implementation of [CSRF prevention from the Apollo Router](https://www.apol
 Install the gem and add to the application's Gemfile by executing:
 
 ```shell
-bundle add rack-cors_simple_request
+bundle add rack-cors-csrf_prevention
 ```
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 
 ```shell
-gem install rack-cors_simple_request
+gem install rack-cors-csrf_prevention
 ```
 
 ## Configuration
@@ -50,4 +50,4 @@ push git commits and the created tag, and push the `.gem` file to [rubygems.org]
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/digitaz/rack-cors_simple_request.
+Bug reports and pull requests are welcome on GitHub at https://github.com/digitaz/rack-cors-csrf_prevention.
