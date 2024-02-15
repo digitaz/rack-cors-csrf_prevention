@@ -68,7 +68,7 @@ RSpec.describe Rack::Cors::CsrfPrevention do
       context "when required header provided" do
         let(:request_headers) do
           simple_request_header.merge!({
-            "HTTP_X-APOLLO-OPERATION-NAME" => "test"
+            "HTTP_X_APOLLO_OPERATION_NAME" => "test"
           })
         end
 
@@ -163,13 +163,13 @@ RSpec.describe Rack::Cors::CsrfPrevention do
     let(:middleware) do
       Rack::Cors::CsrfPrevention.new(
         app,
-        required_headers: %w[REQUIRED-HEADER SOME-SPECIAL-HEADER]
+        required_headers: %w[REQUIRED_HEADER SOME_SPECIAL_HEADER]
       )
     end
     let(:path) { "https://example.com/graphql" }
 
     context "with first required header" do
-      let(:request_headers) { simple_request_header.merge!("HTTP_REQUIRED-HEADER" => "test") }
+      let(:request_headers) { simple_request_header.merge!("HTTP_REQUIRED_HEADER" => "test") }
 
       it "pass" do
         expect(@status).to eq(200)
@@ -177,7 +177,7 @@ RSpec.describe Rack::Cors::CsrfPrevention do
     end
 
     context "with second required header" do
-      let(:request_headers) { simple_request_header.merge!("HTTP_SOME-SPECIAL-HEADER" => "value") }
+      let(:request_headers) { simple_request_header.merge!("HTTP_SOME_SPECIAL_HEADER" => "value") }
 
       it "pass" do
         expect(@status).to eq(200)
@@ -185,7 +185,7 @@ RSpec.describe Rack::Cors::CsrfPrevention do
     end
 
     context "with default apollo header" do
-      let(:request_headers) { simple_request_header.merge!("HTTP_APOLLO-REQUIRE-PREFLIGHT" => "true") }
+      let(:request_headers) { simple_request_header.merge!("HTTP_APOLLO_REQUIRE_PREFLIGHT" => "true") }
 
       it "pass" do
         expect(@status).to eq(200)
@@ -193,7 +193,7 @@ RSpec.describe Rack::Cors::CsrfPrevention do
     end
 
     context "with non-required header" do
-      let(:request_headers) { simple_request_header.merge!("HTTP_OPTIONAL-HEADER" => "test") }
+      let(:request_headers) { simple_request_header.merge!("HTTP_OPTIONAL_HEADER" => "test") }
 
       it "rejected" do
         expect(@status).to eq(400)

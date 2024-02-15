@@ -10,8 +10,8 @@ module Rack
       include Rack::Cors::CsrfPrevention::Logger
 
       APOLLO_CUSTOM_PREFLIGHT_HEADERS = %w[
-        X-APOLLO-OPERATION-NAME
-        APOLLO-REQUIRE-PREFLIGHT
+        X_APOLLO_OPERATION_NAME
+        APOLLO_REQUIRE_PREFLIGHT
       ].freeze
 
       NON_PREFLIGHTED_CONTENT_TYPES = %w[
@@ -23,7 +23,7 @@ module Rack
       ERROR_MESSAGE = <<~HEREDOC
         This operation has been blocked as a potential Cross-Site Request Forgery (CSRF).
 
-        Please either specify a "Content-Type" header (with a mime-type that is not one of #{NON_PREFLIGHTED_CONTENT_TYPES.join(', ')}) or provide one of the following headers: #{APOLLO_CUSTOM_PREFLIGHT_HEADERS.join(', ')}.
+        Please either specify a "Content-Type" header (with a mime-type that is not one of #{NON_PREFLIGHTED_CONTENT_TYPES.join(', ')}) or provide one of the following headers: #{APOLLO_CUSTOM_PREFLIGHT_HEADERS.join(', ').tr('_', '-')}.
       HEREDOC
 
       def initialize(
