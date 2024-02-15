@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rack/cors/csrf_prevention"
+require "debug"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
