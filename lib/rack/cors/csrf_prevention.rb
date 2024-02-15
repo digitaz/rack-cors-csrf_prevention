@@ -28,12 +28,13 @@ module Rack
 
       def initialize(
         app,
-        paths:,
-        required_headers: APOLLO_CUSTOM_PREFLIGHT_HEADERS
+        path: nil,
+        paths: [],
+        required_headers: []
       )
         @app = app
-        @paths = paths
-        @required_headers = required_headers
+        @paths = path.nil? && paths.empty? ? ["/graphql"] : [path].compact + paths
+        @required_headers = APOLLO_CUSTOM_PREFLIGHT_HEADERS + required_headers
       end
 
       def call(env)

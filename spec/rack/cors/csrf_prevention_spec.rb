@@ -2,7 +2,7 @@
 
 RSpec.describe Rack::Cors::CsrfPrevention do
   let(:app) { ->(env) { [200, env, "hello"] } }
-  let(:middleware) { Rack::Cors::CsrfPrevention.new(app, paths: %[/graphql]) }
+  let(:middleware) { Rack::Cors::CsrfPrevention.new(app) }
   let(:rack_response) { middleware.call(request) }
   let(:request_headers) { {} }
   let(:simple_request_header) { { "CONTENT_TYPE" => "application/x-www-form-urlencoded" } }
@@ -98,34 +98,62 @@ RSpec.describe Rack::Cors::CsrfPrevention do
   end
 
   context "when initialized with custom paths" do
-    let(:middleware) { Rack::Cors::CsrfPrevention.new(app, paths: %[/admin/gql /custom]) }
+    context "with string value" do
+      let(:middleware) { Rack::Cors::CsrfPrevention.new(app, path: "/custom") }
 
-    context "with simple request" do
-      let(:request_headers) { simple_request_header }
+      context "with simple request" do
+        let(:request_headers) { simple_request_header }
 
-      context "to protected path" do
-        context "/admin/gql" do
-          let(:path) { "/admin/gql" }
+        context "to protected path" do
+          context "/custom" do
+            let(:path) { "/custom" }
 
-          it "rejected" do
-            expect(@status).to eq(400)
+            it "rejected" do
+              expect(@status).to eq(400)
+            end
           end
         end
 
-        context "/custom" do
-          let(:path) { "/custom" }
+        context "to unprotected path" do
+          let(:path) { "/unprotected" }
 
-          it "rejected" do
-            expect(@status).to eq(400)
+          it "pass" do
+            expect(@status).to eq(200)
           end
         end
       end
+    end
 
-      context "to unprotected path" do
-        let(:path) { "/unprotected" }
+    context "with array value" do
+      let(:middleware) { Rack::Cors::CsrfPrevention.new(app, paths: %w[/admin/gql /custom]) }
 
-        it "pass" do
-          expect(@status).to eq(200)
+      context "with simple request" do
+        let(:request_headers) { simple_request_header }
+
+        context "to protected path" do
+          context "/admin/gql" do
+            let(:path) { "/admin/gql" }
+
+            it "rejected" do
+              expect(@status).to eq(400)
+            end
+          end
+
+          context "/custom" do
+            let(:path) { "/custom" }
+
+            it "rejected" do
+              expect(@status).to eq(400)
+            end
+          end
+        end
+
+        context "to unprotected path" do
+          let(:path) { "/unprotected" }
+
+          it "pass" do
+            expect(@status).to eq(200)
+          end
         end
       end
     end
@@ -135,7 +163,6 @@ RSpec.describe Rack::Cors::CsrfPrevention do
     let(:middleware) do
       Rack::Cors::CsrfPrevention.new(
         app,
-        paths: %[/graphql],
         required_headers: %w[REQUIRED-HEADER SOME-SPECIAL-HEADER]
       )
     end
@@ -151,6 +178,14 @@ RSpec.describe Rack::Cors::CsrfPrevention do
 
     context "with second required header" do
       let(:request_headers) { simple_request_header.merge!("HTTP_SOME-SPECIAL-HEADER" => "value") }
+
+      it "pass" do
+        expect(@status).to eq(200)
+      end
+    end
+
+    context "with default apollo header" do
+      let(:request_headers) { simple_request_header.merge!("HTTP_APOLLO-REQUIRE-PREFLIGHT" => "true") }
 
       it "pass" do
         expect(@status).to eq(200)
