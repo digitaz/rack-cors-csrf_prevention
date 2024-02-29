@@ -17,7 +17,7 @@ GEM
       reline (>= 0.4.2)
     psych (5.1.2)
       stringio
-    rack (2.2.7)
+    rack (3.0.9.1)
     rake (13.0.6)
     rdoc (6.6.2)
       psych (>= 4.0.0)
