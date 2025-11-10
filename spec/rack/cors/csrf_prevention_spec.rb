@@ -45,6 +45,16 @@ RSpec.describe Rack::Cors::CsrfPrevention do
         it "logs", :skip_request do
           expect { rack_response }.to output(/Request isn't preflighted/).to_stdout
         end
+
+        context "with detailed_error: false" do
+          let(:middleware) { Rack::Cors::CsrfPrevention.new(app, detailed_error: false) }
+
+          it "returns generic error message" do
+            expect(@status).to eq(400)
+            expect(@headers).to eq({ "Content-Type" => "text/plain" })
+            expect(@response).to eq(["Bad Request"])
+          end
+        end
       end
 
       context "without content-type header" do
@@ -62,6 +72,16 @@ RSpec.describe Rack::Cors::CsrfPrevention do
 
         it "logs", :skip_request do
           expect { rack_response }.to output(/Request isn't preflighted/).to_stdout
+        end
+
+        context "with detailed_error: false" do
+          let(:middleware) { Rack::Cors::CsrfPrevention.new(app, detailed_error: false) }
+
+          it "returns generic error message" do
+            expect(@status).to eq(400)
+            expect(@headers).to eq({ "Content-Type" => "text/plain" })
+            expect(@response).to eq(["Bad Request"])
+          end
         end
       end
 

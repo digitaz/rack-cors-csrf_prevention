@@ -30,11 +30,13 @@ module Rack
         app,
         path: nil,
         paths: [],
-        required_headers: []
+        required_headers: [],
+        detailed_error: true
       )
         @app = app
         @paths = path.nil? && paths.empty? ? ["/graphql"] : [path].compact + paths
         @required_headers = APOLLO_CUSTOM_PREFLIGHT_HEADERS + required_headers
+        @detailed_error = detailed_error
       end
 
       def call(env)
@@ -49,7 +51,7 @@ module Rack
         else
           logger(env).debug { "Request isn't preflighted" }
 
-          Rack::Response[400, { "Content-Type" => "text/plain" }, ERROR_MESSAGE].to_a
+          Rack::Response[400, { "Content-Type" => "text/plain" }, response_body].to_a
         end
       end
 
@@ -71,6 +73,10 @@ module Rack
 
       def recommended_header_provided?(request)
         @required_headers.any? { |header| request.has_header?("HTTP_#{header}") }
+      end
+
+      def response_body
+        @detailed_error ? ERROR_MESSAGE : "Bad Request"
       end
     end
   end

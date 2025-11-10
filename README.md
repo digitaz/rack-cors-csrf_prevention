@@ -26,19 +26,38 @@ gem install rack-cors-csrf_prevention
 Rails.application.config.middleware.use Rack::Cors::CsrfPrevention
 ```
 
-By default, gem protects path `/graphql` and allows only `X-Apollo-Operation-Name` or `Apollo-Require-Preflight` header for non-preflighted content types.
+#### Paths
 
-You can customize path and headers for CSRF prevention:
+By default, the gem protects only `/graphql` path.
+
+You can set your path using `path` argument:
 
 ```ruby
-# config/initializers/cors.rb
-
-Rails.application.config.middleware.use Rack::Cors::CsrfPrevention,
-                                        path: "/gql",
-                                        required_headers: %w[SOME-SPECIAL-HEADER]
+config.middleware.use Rack::Cors::CsrfPrevention, path: "/gql"
 ```
 
 Also, you can configure multiple paths via `paths` argument.
+
+#### Headers
+
+By default, gem allows only `X-Apollo-Operation-Name` or `Apollo-Require-Preflight` header for non-preflighted content types.
+
+You can add additional headers for CSRF prevention:
+
+```ruby
+config.middleware.use Rack::Cors::CsrfPrevention,
+                      required_headers: %w[SOME-SPECIAL-HEADER]
+```
+
+#### Error message
+
+By default, gem returns detailed error message that can help API clients in development.
+
+You can hide detailed error message in a production environment:
+
+```ruby
+config.middleware.use Rack::Cors::CsrfPrevention, detailed_error: !Rails.env.production?
+```
 
 ## Development
 
