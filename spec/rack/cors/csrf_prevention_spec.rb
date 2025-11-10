@@ -2,7 +2,7 @@
 
 RSpec.describe Rack::Cors::CsrfPrevention do
   let(:app) { ->(env) { [200, env, "hello"] } }
-  let(:middleware) { Rack::Cors::CsrfPrevention.new(app) }
+  let(:middleware) { described_class.new(app) }
   let(:rack_response) { middleware.call(request) }
   let(:request_headers) { {} }
   let(:simple_request_header) { { "CONTENT_TYPE" => "application/x-www-form-urlencoded" } }
@@ -47,7 +47,7 @@ RSpec.describe Rack::Cors::CsrfPrevention do
         end
 
         context "with detailed_error: false" do
-          let(:middleware) { Rack::Cors::CsrfPrevention.new(app, detailed_error: false) }
+          let(:middleware) { described_class.new(app, detailed_error: false) }
 
           it "returns generic error message" do
             expect(@status).to eq(400)
@@ -75,7 +75,7 @@ RSpec.describe Rack::Cors::CsrfPrevention do
         end
 
         context "with detailed_error: false" do
-          let(:middleware) { Rack::Cors::CsrfPrevention.new(app, detailed_error: false) }
+          let(:middleware) { described_class.new(app, detailed_error: false) }
 
           it "returns generic error message" do
             expect(@status).to eq(400)
@@ -87,9 +87,7 @@ RSpec.describe Rack::Cors::CsrfPrevention do
 
       context "when required header provided" do
         let(:request_headers) do
-          simple_request_header.merge!({
-            "HTTP_X_APOLLO_OPERATION_NAME" => "test"
-          })
+          simple_request_header.merge!({ "HTTP_X_APOLLO_OPERATION_NAME" => "test" })
         end
 
         it "pass" do
@@ -119,7 +117,7 @@ RSpec.describe Rack::Cors::CsrfPrevention do
 
   context "when initialized with custom paths" do
     context "with string value" do
-      let(:middleware) { Rack::Cors::CsrfPrevention.new(app, path: "/custom") }
+      let(:middleware) { described_class.new(app, path: "/custom") }
 
       context "with simple request" do
         let(:request_headers) { simple_request_header }
@@ -145,7 +143,7 @@ RSpec.describe Rack::Cors::CsrfPrevention do
     end
 
     context "with array value" do
-      let(:middleware) { Rack::Cors::CsrfPrevention.new(app, paths: %w[/admin/gql /custom]) }
+      let(:middleware) { described_class.new(app, paths: %w[/admin/gql /custom]) }
 
       context "with simple request" do
         let(:request_headers) { simple_request_header }
@@ -181,7 +179,7 @@ RSpec.describe Rack::Cors::CsrfPrevention do
 
   context "when initialized with custom required headers" do
     let(:middleware) do
-      Rack::Cors::CsrfPrevention.new(
+      described_class.new(
         app,
         required_headers: %w[REQUIRED_HEADER SOME_SPECIAL_HEADER]
       )

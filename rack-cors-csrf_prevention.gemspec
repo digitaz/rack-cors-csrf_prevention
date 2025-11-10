@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 2.6.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
+  spec.metadata["rubygems_mfa_required"] = "true"
   spec.metadata["source_code_uri"] = spec.homepage
 
   # Specify which files should be added to the gem when it is released.
@@ -50,7 +51,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rack", ">= 1"
 
+  spec.add_development_dependency "debug", "~> 1.9", ">= 1.9.1"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rspec", "~> 3.0"
-  spec.add_development_dependency "debug", "~> 1.9", ">= 1.9.1"
+  spec.add_development_dependency "rubocop", "~> 1.81", ">= 1.81.1"
 end

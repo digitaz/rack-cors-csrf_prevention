@@ -1,12 +1,19 @@
 AllCops:
   NewCops: enable
+  Exclude:
+    - "bin/bundle"
+
+Gemspec/DevelopmentDependencies:
+  EnforcedStyle: gemspec
 
 Metrics/BlockLength:
-  Exclude:
-    - *.gemspec
+  Enabled: false
 
 Metrics/ParameterLists:
   CountKeywordArgs: false
+
+Style/Documentation:
+  Enabled: false
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
